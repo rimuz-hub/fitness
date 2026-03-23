@@ -6,7 +6,7 @@
     <meta name="description" content="Sleeper Build - Premium 7-Day Bodyweight Workout Tracker">
     <meta name="theme-color" content="#0f172a">
     <title>Sleeper Build Tracker</title>
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/fitness/manifest.json">
     <style>
         * {
             margin: 0;
@@ -1521,7 +1521,7 @@
 
             timerComplete() {
                 this.closeTimer();
-                this.notifyUser('Rest complete! Ready for the next set? 💪');
+                this.notifyUser('Rest complete! Ready for the next set 💪');
             },
 
             setupNotifications() {
@@ -1565,7 +1565,7 @@
                     });
 
                     this.setData('lastNotificationDate', today);
-                }, 4 * 60 * 60 * 1000); // Check every 4 hours
+                }, 0.017 * 60 * 60 * 1000); // Check every 4 hours
             },
 
             isTodayComplete() {
@@ -1624,3 +1624,4 @@
     </script>
 </body>
 </html>
+<!-- test -->

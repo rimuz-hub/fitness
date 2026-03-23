@@ -2,8 +2,8 @@
   "name": "Sleeper Build - Bodyweight Workout Tracker",
   "short_name": "Sleeper Build",
   "description": "Premium 7-day bodyweight workout program tracker with streak system and XP progression",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/fitness/",
+  "scope": "/fitness/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0f172a",
@@ -36,7 +36,7 @@
       "name": "Start Today's Workout",
       "short_name": "Today's Workout",
       "description": "Jump to today's workout routine",
-      "url": "/?action=today",
+      "url": "/fitness/?action=today",
       "icons": [
         {
           "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect fill='%238b5cf6' width='96' height='96'/><text x='48' y='48' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='white'>🏋️</text></svg>",
