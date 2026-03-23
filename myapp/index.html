@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sleeper Build - Premium 7-Day Bodyweight Workout Tracker">
+    <meta name="theme-color" content="#0f172a">
+    <title>Sleeper Build Tracker</title>
+    <link rel="manifest" href="/fitness/manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --tertiary: #f59e0b;
+            --background: #0a0e27;
+            --surface: #111827;
+            --surface-light: #1f2937;
+            --surface-lighter: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-tertiary: #9ca3af;
+            --success: #10b981;
+            --success-light: #6ee7b7;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #374151;
+            --border-light: #4b5563;
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            --shadow-lg: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--background) 0%, #1a1f3a 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--text-primary);
+        }
+
+        body {
+            overflow-x: hidden;
+            background-attachment: fixed;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        ::selection {
+            background: rgba(99, 102, 241, 0.3);
+            color: var(--text-primary);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.3);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.6);
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 0 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 100%, rgba(236, 72, 153, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0 28px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+            position: sticky;
+            top: 0;
+            background: linear-gradient(180deg, rgba(10, 14, 39, 0.95) 0%, rgba(10, 14, 39, 0.7) 100%);
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .header-logo span {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.05));
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .stat:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(236, 72, 153, 0.1));
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Day Header */
+        .day-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .day-title {
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--tertiary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .day-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 32px;
+        }
+
+        .progress-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: var(--surface-lighter);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 50%, var(--tertiary) 100%);
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Exercise Card */
+        .exercise-card {
+            background: linear-gradient(135deg, var(--surface) 0%, rgba(31, 41, 55, 0.5) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .exercise-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.5), transparent);
+        }
+
+        .exercise-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.25), 0 0 30px rgba(99, 102, 241, 0.15);
+            transform: translateY(-4px);
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(99, 102, 241, 0.1) 100%);
+        }
+
+        .exercise-card.completed {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(99, 102, 241, 0.08) 100%);
+            border-color: var(--success-light);
+        }
+
+        .exercise-card.completed::before {
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.5), transparent);
+        }
+
+        .exercise-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .exercise-checkbox {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2.5px solid var(--border-light);
+            border-radius: 8px;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--surface-light) 0%, rgba(99, 102, 241, 0.05) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-top: 2px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .exercise-checkbox:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.1));
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+            transform: scale(1.05);
+        }
+
+        .exercise-checkbox.checked {
+            background: linear-gradient(135deg, var(--success) 0%, var(--success-light) 100%);
+            border-color: var(--success);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .exercise-info {
+            flex: 1;
+        }
+
+        .exercise-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .exercise-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .exercise-suggestion {
+            font-size: 13px;
+            color: var(--primary-light);
+            font-weight: 600;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .exercise-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .rep-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .rep-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            width: 40px;
+            text-align: right;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rep-input {
+            background: linear-gradient(135deg, var(--surface-light) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+            padding: 10px 14px;
+            border-radius: 10px;
+            width: 70px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            caret-color: var(--primary);
+        }
+
+        .rep-input::placeholder {
+            color: var(--text-tertiary);
+            opacity: 0.5;
+        }
+
+        .rep-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(99, 102, 241, 0.05));
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+            transform: scale(1.05);
+        }
+
+        .timer-btn {
+            background: linear-gradient(135deg, var(--surface-light) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border: 2px solid var(--border);
+            color: var(--text-secondary);
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timer-btn:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(99, 102, 241, 0.05));
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+            transform: scale(1.05);
+        }
+
+        .timer-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 40px rgba(99, 102, 241, 0.45);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--surface-light) 0%, rgba(99, 102, 241, 0.05) 100%);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05));
+            color: var(--primary);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            backdrop-filter: blur(12px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, var(--surface) 0%, rgba(31, 41, 55, 0.5) 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: var(--shadow-lg), 0 0 60px rgba(99, 102, 241, 0.2);
+            animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .modal-description {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .timer-display {
+            text-align: center;
+            margin: 32px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.05));
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .timer-number {
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .timer-label {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-top: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+        }
+
+        /* Completion Message */
+        .completion-message {
+            display: none;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(99, 102, 241, 0.1) 100%);
+            border: 2px solid var(--success-light);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 28px;
+            text-align: center;
+            animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .completion-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--success), transparent);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .completion-message.active {
+            display: block;
+        }
+
+        .completion-message-content {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--success);
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .completion-message-reward {
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Stats Card */
+        .stats-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.05) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 28px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            transform: translateY(-4px);
+        }
+
+        .stat-item-value {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .stat-item-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Day Navigation */
+        .day-nav {
+            display: flex;
+            gap: 10px;
+            margin-top: 32px;
+            padding-bottom: 32px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+
+        .day-nav::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .day-nav::-webkit-scrollbar-track {
+            background: var(--surface-light);
+            border-radius: 3px;
+        }
+
+        .day-nav::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 3px;
+        }
+
+        .day-btn {
+            padding: 12px 18px;
+            background: linear-gradient(135deg, var(--surface-light) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border: 2px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            min-width: fit-content;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .day-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(99, 102, 241, 0.05));
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .day-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+            transform: scale(1.05);
+        }
+
+        .day-btn.completed {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+            border-color: var(--success-light);
+            color: var(--success);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .header {
+                padding: 14px 0 18px;
+                margin-bottom: 18px;
+            }
+
+            .header-logo {
+                font-size: 18px;
+                gap: 8px;
+            }
+
+            .header-stats {
+                gap: 10px;
+            }
+
+            .stat {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+
+            .stat-value {
+                font-size: 16px;
+            }
+
+            .day-title {
+                font-size: 32px;
+            }
+
+            .day-header {
+                margin-bottom: 20px;
+                padding-bottom: 16px;
+            }
+
+            .exercise-card {
+                padding: 14px;
+                margin-bottom: 12px;
+            }
+
+            .exercise-name {
+                font-size: 16px;
+            }
+
+            .exercise-controls {
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+            }
+
+            .rep-input-group {
+                width: 100%;
+                gap: 8px;
+            }
+
+            .rep-input {
+                width: 100%;
+            }
+
+            .timer-btn {
+                width: 100%;
+            }
+
+            .modal {
+                padding: 24px;
+            }
+
+            .modal-title {
+                font-size: 22px;
+            }
+
+            .timer-number {
+                font-size: 48px;
+            }
+
+            .stats-card {
+                gap: 12px;
+                padding: 20px;
+            }
+
+            .day-nav {
+                margin-top: 24px;
+                padding-bottom: 24px;
+                padding-top: 16px;
+            }
+
+            .day-btn {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+
+            .progress-container {
+                margin-bottom: 24px;
+            }
+
+            .completion-message {
+                padding: 16px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Loading Animation */
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        /* Smooth transitions */
+        .exercise-card {
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Glow effects */
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(99, 102, 241, 0.4);
+            }
+        }
+
+        .progress-fill {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+            }
+        }
+
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-2px);
+            }
+        }
+
+        .header-logo {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        #mainContent {
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Page transitions */
+        .exercise-card {
+            animation: slideInUp 0.5s ease backwards;
+        }
+
+        .exercise-card:nth-child(1) { animation-delay: 0.05s; }
+        .exercise-card:nth-child(2) { animation-delay: 0.1s; }
+        .exercise-card:nth-child(3) { animation-delay: 0.15s; }
+        .exercise-card:nth-child(4) { animation-delay: 0.2s; }
+        .exercise-card:nth-child(5) { animation-delay: 0.25s; }
+        .exercise-card:nth-child(6) { animation-delay: 0.3s; }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Input focus ring */
+        input:focus {
+            outline: none;
+        }
+
+        /* Better button focus states */
+        button:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* Disabled state */
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Smooth page layout */
+        #mainContent {
+            will-change: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-logo">
+                💪 <span>Sleeper Build</span>
+            </div>
+            <div class="header-stats">
+                <div class="stat">
+                    <span>🔥</span>
+                    <span class="stat-value" id="streak">0</span>
+                </div>
+                <div class="stat">
+                    <span>🎮</span>
+                    <span class="stat-value" id="level">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent">
+            <!-- Day Header -->
+            <div class="day-header">
+                <h1 class="day-title" id="dayTitle">Day 1</h1>
+                <p class="day-subtitle" id="daySubtitle">Monday • Upper Push</p>
+            </div>
+
+            <!-- Completion Message -->
+            <div class="completion-message" id="completionMessage">
+                <div class="completion-message-content">🎉 Workout Complete!</div>
+                <div class="completion-message-reward" id="completionReward">+50 XP Earned</div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-card">
+                <div class="stat-item">
+                    <div class="stat-item-value" id="totalXP">0</div>
+                    <div class="stat-item-label">Total XP</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item-value" id="workoutCount">0</div>
+                    <div class="stat-item-label">Workouts Done</div>
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span>Today's Progress</span>
+                    <span id="progressText">0/6</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Exercises -->
+            <div id="exercisesList"></div>
+
+            <!-- Day Navigation -->
+            <div class="day-nav" id="dayNav"></div>
+        </div>
+    </div>
+
+    <!-- Timer Modal -->
+    <div class="modal-overlay" id="timerModal">
+        <div class="modal">
+            <div class="modal-title">Rest Timer</div>
+            <div class="modal-description">Take a breather and prepare for the next set</div>
+            <div class="timer-display">
+                <div class="timer-number" id="timerNumber">60</div>
+                <div class="timer-label">seconds remaining</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="app.closeTimer()">Skip</button>
+                <button class="btn btn-primary" id="timerStatus">Pause</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Workout Program Data - All at HOME, NO EQUIPMENT needed!
+        const workoutProgram = {
+            1: {
+                name: "Day 1",
+                day: "Monday",
+                focus: "🔥 Upper Body Push",
+                exercises: [
+                    { name: "Push-ups", emoji: "💪" },
+                    { name: "Wide Push-ups", emoji: "💪" },
+                    { name: "Diamond Push-ups", emoji: "💎" },
+                    { name: "Pike Push-ups", emoji: "⛰️" },
+                    { name: "Dips (Couch/Chair)", emoji: "🪑" },
+                    { name: "Plyo Push-ups", emoji: "💥" }
+                ]
+            },
+            2: {
+                name: "Day 2",
+                day: "Tuesday",
+                focus: "🔗 Back & Biceps",
+                exercises: [
+                    { name: "Reverse Snow Angels", emoji: "⛷️" },
+                    { name: "Scapular Pull-ups (Bar)", emoji: "📍" },
+                    { name: "Dead Hangs", emoji: "🤸" },
+                    { name: "Reverse Plank Hold", emoji: "🫡" },
+                    { name: "Superman Holds", emoji: "🦸" },
+                    { name: "Inverted Row (Table)", emoji: "🍽️" }
+                ]
+            },
+            3: {
+                name: "Day 3",
+                day: "Wednesday",
+                focus: "🦵 Lower Body Blaster",
+                exercises: [
+                    { name: "Bodyweight Squats", emoji: "🦵" },
+                    { name: "Bulgarian Split Squats", emoji: "⚖️" },
+                    { name: "Lunges (Alternating)", emoji: "🚶" },
+                    { name: "Glute Bridges", emoji: "🌉" },
+                    { name: "Single-Leg Hops", emoji: "🦘" },
+                    { name: "Wall Sit", emoji: "📍" }
+                ]
+            },
+            4: {
+                name: "Day 4",
+                day: "Thursday",
+                focus: "💪 Push Day 2",
+                exercises: [
+                    { name: "Regular Push-ups", emoji: "💪" },
+                    { name: "Archer Push-ups", emoji: "🏹" },
+                    { name: "Decline Push-ups", emoji: "📉" },
+                    { name: "Pseudo Planche Lean", emoji: "🏋️" },
+                    { name: "Handstand Hold (Wall)", emoji: "🤖" },
+                    { name: "Push-up to Down Dog", emoji: "🐕" }
+                ]
+            },
+            5: {
+                name: "Day 5",
+                day: "Friday",
+                focus: "🔗 Pull Day 2",
+                exercises: [
+                    { name: "Pull-ups Assist (Band)", emoji: "📍" },
+                    { name: "Chin-ups Assist (Band)", emoji: "💪" },
+                    { name: "Reverse fly Hold", emoji: "✈️" },
+                    { name: "Isometric Back Squeeze", emoji: "🤐" },
+                    { name: "Prone W-Raise", emoji: "✌️" },
+                    { name: "Bodyline Hold", emoji: "➖" }
+                ]
+            },
+            6: {
+                name: "Day 6",
+                day: "Saturday",
+                focus: "🧘 Legs & Core Burner",
+                exercises: [
+                    { name: "Jump Squats", emoji: "⬆️" },
+                    { name: "Side Lunges", emoji: "↔️" },
+                    { name: "Single-Leg Glute Bridge", emoji: "🌉" },
+                    { name: "Leg Raises (Hanging/Lying)", emoji: "🦵" },
+                    { name: "V-Ups", emoji: "⬆️" },
+                    { name: "Hollow Body Hold", emoji: "⭕" }
+                ]
+            },
+            7: {
+                name: "Day 7",
+                day: "Sunday",
+                focus: "🧘 Full Body & Recovery",
+                exercises: [
+                    { name: "Slow Push-ups", emoji: "😌" },
+                    { name: "Slow Squats", emoji: "😌" },
+                    { name: "Plank Hold", emoji: "⏱️" },
+                    { name: "Child's Pose", emoji: "🙏" },
+                    { name: "Stretching & Mobility", emoji: "🤸" },
+                    { name: "Breathing Work", emoji: "💨" }
+                ]
+            }
+        };
+
+        const app = {
+            currentDay: 1,
+            timerInterval: null,
+            timerActive: false,
+            timerPaused: false,
+            timerRemaining: 60,
+            notificationCheckInterval: null,
+
+            init() {
+                this.setCurrentDay();
+                this.render();
+                this.ensureNotificationSupport();
+                this.setupNotifications();
+                this.loadData();
+                this.checkNotification();
+            },
+
+            setCurrentDay() {
+                const now = new Date();
+                const day = now.getDay();
+                this.currentDay = day === 0 ? 7 : day;
+            },
+
+            loadData() {
+                this.updateStats();
+                this.render();
+            },
+
+            getData(key, defaultValue = null) {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : defaultValue;
+            },
+
+            setData(key, value) {
+                localStorage.setItem(key, JSON.stringify(value));
+            },
+
+            getExerciseKey(day, index) {
+                return `exercise_${day}_${index}`;
+            },
+
+            getExerciseData(day, index) {
+                return this.getData(this.getExerciseKey(day, index), {
+                    completed: false,
+                    reps: 0,
+                    history: []
+                });
+            },
+
+            setExerciseData(day, index, data) {
+                this.setData(this.getExerciseKey(day, index), data);
+            },
+
+            toggleExercise(day, index) {
+                const data = this.getExerciseData(day, index);
+                data.completed = !data.completed;
+
+                if (data.completed) {
+                    data.history.push({
+                        date: new Date().toISOString(),
+                        reps: data.reps || 0
+                    });
+                }
+
+                this.setExerciseData(day, index, data);
+                this.onExerciseUpdate(day);
+                this.render();
+            },
+
+            updateReps(day, index, reps) {
+                const data = this.getExerciseData(day, index);
+                data.reps = parseInt(reps) || 0;
+                this.setExerciseData(day, index, data);
+            },
+
+            onExerciseUpdate(day) {
+                const exercises = workoutProgram[day].exercises;
+                let completed = 0;
+
+                for (let i = 0; i < exercises.length; i++) {
+                    const data = this.getExerciseData(day, i);
+                    if (data.completed) {
+                        completed++;
+                    }
+                }
+
+                if (completed === exercises.length && day === this.currentDay) {
+                    this.completeDay();
+                }
+
+                this.updateStats();
+                this.render();
+            },
+
+            completeDay() {
+                const lastComplete = this.getData('lastDayCompleted', null);
+                const today = new Date().toDateString();
+
+                if (lastComplete === today) return;
+
+                this.setData('lastDayCompleted', today);
+                this.setData('dayIsComplete_'+today, true);
+
+
+                const xpGain = 50;
+                const currentXP = this.getData('totalXP', 0);
+                this.setData('totalXP', currentXP + xpGain);
+
+                const workoutCount = this.getData('workoutCount', 0);
+                this.setData('workoutCount', workoutCount + 1);
+
+                this.updateStreak();
+                this.showCompletionMessage(xpGain);
+                this.updateStats();
+                this.render();
+            },
+
+            updateStreak() {
+                const lastComplete = this.getData('lastDayCompleted', null);
+                const today = new Date().toDateString();
+                let streak = this.getData('streak', 0);
+
+                if (lastComplete === today) {
+                    return;
+                }
+
+                const lastDate = lastComplete ? new Date(lastComplete) : null;
+                const currentDate = new Date();
+
+                if (lastDate) {
+                    const diffTime = currentDate - lastDate;
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+                    if (diffDays === 1) {
+                        streak++;
+                    } else if (diffDays > 1) {
+                        streak = 1;
+                    }
+                } else {
+                    streak = 1;
+                }
+
+                this.setData('streak', streak);
+            },
+
+            showCompletionMessage(xp) {
+                const msg = document.getElementById('completionMessage');
+                const reward = document.getElementById('completionReward');
+                reward.textContent = `+${xp} XP Earned`;
+                msg.classList.add('active');
+
+                setTimeout(() => {
+                    msg.classList.remove('active');
+                }, 3000);
+            },
+
+            updateStats() {
+                const xp = this.getData('totalXP', 0);
+                const level = Math.floor(xp / 100);
+                const streak = this.getData('streak', 0);
+                const workoutCount = this.getData('workoutCount', 0);
+
+                document.getElementById('streak').textContent = streak;
+                document.getElementById('level').textContent = level;
+                document.getElementById('totalXP').textContent = xp;
+                document.getElementById('workoutCount').textContent = workoutCount;
+
+                this.updateProgressBar();
+            },
+
+            updateProgressBar() {
+                const workout = workoutProgram[this.currentDay];
+                let completed = 0;
+
+                for (let i = 0; i < workout.exercises.length; i++) {
+                    const data = this.getExerciseData(this.currentDay, i);
+                    if (data.completed) completed++;
+                }
+
+                const percentage = (completed / workout.exercises.length) * 100;
+                document.getElementById('progressFill').style.width = percentage + '%';
+                document.getElementById('progressText').textContent = `${completed}/${workout.exercises.length}`;
+            },
+
+            getProgression(day, exerciseIndex) {
+                const data = this.getExerciseData(day, exerciseIndex);
+
+                if (data.history.length === 0) {
+                    return "No previous data";
+                }
+
+                const lastReps = data.history[data.history.length - 1].reps;
+
+                if (lastReps === 0) {
+                    return "Log your first set";
+                }
+
+                const targetIncrease = Math.ceil(lastReps * 0.1);
+                const targetReps = lastReps + targetIncrease;
+
+                return `Target: +${targetIncrease} reps (${lastReps} → ${targetReps})`;
+            },
+
+            switchDay(day) {
+                this.currentDay = day;
+                this.render();
+            },
+
+            render() {
+                const workout = workoutProgram[this.currentDay];
+
+                document.getElementById('dayTitle').textContent = workout.name;
+                document.getElementById('daySubtitle').textContent = `${workout.day} • ${workout.focus}`;
+
+                const exercisesList = document.getElementById('exercisesList');
+                exercisesList.innerHTML = '';
+
+                for (let i = 0; i < workout.exercises.length; i++) {
+                    const exercise = workout.exercises[i];
+                    const data = this.getExerciseData(this.currentDay, i);
+                    const progression = this.getProgression(this.currentDay, i);
+
+                    const card = document.createElement('div');
+                    card.className = `exercise-card ${data.completed ? 'completed' : ''}`;
+
+                    card.innerHTML = `
+                        <div class="exercise-header">
+                            <button class="exercise-checkbox ${data.completed ? 'checked' : ''}" 
+                                    onclick="app.toggleExercise(${this.currentDay}, ${i})">
+                                ${data.completed ? '✓' : ''}
+                            </button>
+                            <div class="exercise-info">
+                                <div class="exercise-name">
+                                    <img class="exercise-icon" src="${exercise.image || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 64 64\'%3E%3Crect width=\'64\' height=\'64\' fill=\'%239bb7f1\'/%3E%3Ctext x=\'50%\' y=\'56%\' text-anchor=\'middle\' font-size=\'32\' font-family=\'Segoe UI\' fill=\'%23ffffff\'>🏋️</text%3E%3C/svg%3E'}" alt="exercise icon">
+                                    ${exercise.name}
+                                </div>
+                                <div class="exercise-suggestion">${progression}</div>
+                            </div>
+                        </div>
+                        <div class="exercise-controls">
+                            <div class="rep-input-group">
+                                <span class="rep-label">Reps:</span>
+                                <input type="number" class="rep-input" min="0" 
+                                       value="${data.reps}" 
+                                       placeholder="0"
+                                       onchange="app.updateReps(${this.currentDay}, ${i}, this.value); app.onExerciseUpdate(${this.currentDay})">
+                            </div>
+                            <button class="timer-btn" onclick="app.openTimer()">⏱ Rest</button>
+                        </div>
+                    `;
+
+                    exercisesList.appendChild(card);
+                }
+
+                this.updateProgressBar();
+                this.renderDayNav();
+            },
+
+            renderDayNav() {
+                const dayNav = document.getElementById('dayNav');
+                dayNav.innerHTML = '';
+
+                for (let day = 1; day <= 7; day++) {
+                    const lastComplete = this.getData('lastDayCompleted', null);
+                    const today = new Date().toDateString();
+                    let isCompleted = false;
+
+                    // Check if this day was completed
+                    for (let i = 0; i < workoutProgram[day].exercises.length; i++) {
+                        const data = this.getData(`exercise_${day}_${i}`, { completed: false, history: [] });
+                        if (data.history.length > 0) {
+                            const lastHistory = data.history[data.history.length - 1];
+                            // Simple check if completed recently
+                            isCompleted = true;
+                            break;
+                        }
+                    }
+
+                    const btn = document.createElement('button');
+                    btn.className = `day-btn ${this.currentDay === day ? 'active' : ''} ${isCompleted ? 'completed' : ''}`;
+                    btn.textContent = workoutProgram[day].name;
+                    btn.onclick = () => this.switchDay(day);
+                    dayNav.appendChild(btn);
+                }
+            },
+
+            openTimer() {
+                if (this.timerActive) return;
+
+                this.timerActive = true;
+                this.timerPaused = false;
+                this.timerRemaining = 60;
+
+                document.getElementById('timerModal').classList.add('active');
+                document.getElementById('timerStatus').textContent = 'Pause';
+
+                this.startTimer();
+            },
+
+            closeTimer() {
+                this.timerActive = false;
+                clearInterval(this.timerInterval);
+                document.getElementById('timerModal').classList.remove('active');
+                document.getElementById('timerStatus').textContent = 'Pause';
+            },
+
+            startTimer() {
+                this.timerInterval = setInterval(() => {
+                    if (!this.timerPaused) {
+                        this.timerRemaining--;
+                        document.getElementById('timerNumber').textContent = this.timerRemaining;
+
+                        if (this.timerRemaining === 0) {
+                            this.timerComplete();
+                        }
+                    }
+                }, 1000);
+            },
+
+            toggleTimerPause() {
+                this.timerPaused = !this.timerPaused;
+                const btn = document.getElementById('timerStatus');
+                btn.textContent = this.timerPaused ? 'Resume' : 'Pause';
+            },
+
+            timerComplete() {
+                this.closeTimer();
+                this.notifyUser('Rest complete! Ready for the next set 💪');
+            },
+
+            setupNotifications() {
+                if ('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission();
+                }
+            },
+
+            notifyUser(title, options = {}) {
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification(title, {
+                        icon: '💪',
+                        badge: '💪',
+                        ...options
+                    });
+                }
+            },
+
+            checkNotification() {
+                this.notificationCheckInterval = setInterval(() => {
+                    const today = new Date().toDateString();
+                    const lastNotified = this.getData('lastNotificationDate', null);
+
+                    // If today's workout is complete, skip notification
+                    if (this.isTodayComplete()) {
+                        return;
+                    }
+
+                    if (lastNotified === today) {
+                        return;
+                    }
+
+                    if (!('Notification' in window)) return;
+                    if (Notification.permission === 'default') return; // wait for user action
+
+                    this.notifyUser('Time to train! 🏋️', {
+                        body: `Complete today's ${workoutProgram[this.currentDay].focus} workout`,
+                        tag: 'workout-reminder',
+                        renotify: true,
+                        requireInteraction: false
+                    });
+
+                    this.setData('lastNotificationDate', today);
+                }, 0.017 * 60 * 60 * 1000); // Check every 4 hours
+            },
+
+            isTodayComplete() {
+                const dayKey = new Date().toDateString();
+                return this.getData('dayIsComplete_' + dayKey, false);
+            },
+
+            ensureNotificationSupport() {
+                if (!('Notification' in window)) {
+                    console.warn('Notifications are not supported in this browser');
+                    return;
+                }
+
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            this.notifyUser('Notifications enabled', {
+                                body: 'You are set to get reminders every 4 hours until the workout is complete.'
+                            });
+                        }
+                    });
+                }
+            },
+
+            registerServiceWorker() {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('sw.js').catch(err => {
+                        console.log('Service worker registration failed:', err);
+                    });
+                }
+            }
+        };
+
+        // Timer button toggle
+        document.getElementById('timerStatus')?.addEventListener('click', function() {
+            app.toggleTimerPause();
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+            app.registerServiceWorker();
+        });
+
+        // Prevent body scroll when modal is open
+        const timerModal = document.getElementById('timerModal');
+        const observer = new MutationObserver(() => {
+            if (timerModal.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
+
+        observer.observe(timerModal, { attributes: true, attributeFilter: ['class'] });
+    </script>
+</body>
+</html>
+<!-- test -->
