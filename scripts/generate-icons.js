@@ -13,7 +13,8 @@ async function generate() {
 
   const svgPath = path.join(__dirname, '..', 'www', 'icon.svg');
   const outDir = path.join(__dirname, '..', 'www', 'icons');
-  const outPath = path.join(outDir, 'icon-192.png');
+  const outPath192 = path.join(outDir, 'icon-192.png');
+  const outPath512 = path.join(outDir, 'icon-512.png');
 
   if (!fs.existsSync(svgPath)) {
     console.error('SVG source not found at', svgPath);
@@ -28,9 +29,14 @@ async function generate() {
     await sharp(svgBuffer)
       .resize(192, 192, { fit: 'cover' })
       .png({ quality: 90 })
-      .toFile(outPath);
+      .toFile(outPath192);
 
-    console.log('Generated:', outPath);
+    await sharp(svgBuffer)
+      .resize(512, 512, { fit: 'cover' })
+      .png({ quality: 90 })
+      .toFile(outPath512);
+
+    console.log('Generated:', outPath192, outPath512);
   } catch (err) {
     console.error('Failed to generate PNG:', err);
     process.exit(1);
